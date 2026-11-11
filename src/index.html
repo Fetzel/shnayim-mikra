@@ -57,6 +57,7 @@ button{font:inherit;color:inherit}
 /* ---------- home ---------- */
 #home .wrap{padding-block:18px 48px;display:flex;flex-direction:column;gap:22px}
 .brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.langb{border-radius:50%;font-weight:700;font-size:13px;letter-spacing:.02em;color:var(--accent)}
 .brand h1{margin:0;font-family:var(--f-main);font-weight:400;font-size:26px;line-height:1.2}
 .brand small{display:block;font-family:var(--ui);font-size:12.5px;color:var(--muted);margin-top:2px}
 .week{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 20px 20px;display:flex;flex-direction:column;gap:16px}
@@ -111,7 +112,7 @@ details.more[open] summary::after{content:"−"}
 
 .flow{direction:rtl;text-align:justify;font-family:var(--f-main);font-size:var(--fs);line-height:2.05;max-width:36em;margin:0 auto;hyphens:none}
 .flow.tg{font-family:var(--f-tg);color:var(--tg-ink);line-height:1.95}
-.vn{font-family:var(--ui);font-size:.42em;color:var(--accent);font-weight:650;vertical-align:.55em;margin-inline-end:.25em;user-select:none}
+.vn{font-family:var(--ui);font-size:.42em;color:var(--muted);opacity:.8;font-weight:600;vertical-align:.32em;margin-inline-end:.3em;user-select:none}
 .ch{display:inline-block;font-family:var(--ui);font-size:.42em;font-weight:700;color:var(--accent);border:1px solid var(--accent-soft);background:var(--accent-soft);border-radius:6px;padding:0 .45em;margin-inline-end:.35em;vertical-align:.45em;line-height:1.6}
 .bp{display:block;height:.55em}
 .bs{display:inline-block;width:2.4em}
@@ -227,7 +228,8 @@ body[data-rep="plain"] .preview .mk.rep{color:inherit}
   <div class="wrap">
     <div class="brand">
       <div><h1 id="appName">שנים מקרא ואחד תרגום</h1><small id="appSub"></small></div>
-      <button class="ib" id="btnPrefs" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      <div style="display:flex;gap:8px;flex:none"><button class="ib langb" id="btnLang" aria-label="Language"></button>
+      <button class="ib" id="btnPrefs" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
     </div>
     <section class="week" aria-live="polite">
       <div class="eyebrow" id="wkEyebrow"></div>
@@ -304,8 +306,10 @@ body[data-rep="plain"] .preview .mk.rep{color:inherit}
 /* ================= storage ================= */
 const LS={get(k,d){try{const v=localStorage.getItem('smt:'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
           set(k,v){try{localStorage.setItem('smt:'+k,JSON.stringify(v))}catch(e){}}};
-const DEF={tkMode:'plain',tfs:26,tkTwo:true,lang:'he',il:false,mode:'sec',rep:'tint',font:'tf',tgFont:'same',rashi:false,rashiNikud:false,ketiv:true,taam:'tachton',skin:'auto',fs:28};
+const DEF={tkMode:'plain',tfs:26,tkTwo:true,lang:'he',il:false,mode:'sec',rep:'tint',font:'tf',tgFont:'td',rashi:false,rashiNikud:true,ketiv:true,taam:'tachton',skin:'auto',fs:28};
 const S=Object.assign({},DEF,LS.get('prefs',{}));
+// v2 defaults: Targum in Taamey David, Rashi with nikud
+if(!(S.pv>=2)){S.tgFont='td';S.rashiNikud=true;S.pv=2;LS.set('prefs',S)}
 const save=()=>LS.set('prefs',S);
 
 /* ================= fonts ================= */
@@ -458,6 +462,7 @@ function renderHome(){
   const l=L();document.documentElement.lang=S.lang;document.body.dir=S.lang==='he'?'rtl':'ltr';
   $('appName').textContent=S.lang==='he'?'שנים מקרא ואחד תרגום':'Shnayim Mikra';
   $('appSub').textContent=l.sub;
+  $('btnLang').textContent=S.lang==='he'?'EN':'עב';$('btnLang').setAttribute('aria-label',S.lang==='he'?'Switch to English':'לעברית');
   const wk=thisWeek();
   if(!wk){$('wkName').textContent='—';return}
   const dow=new Date().getDay();
@@ -762,6 +767,7 @@ function closeSheets(silent){['pickSheet','prefs'].forEach(id=>$(id).hidden=true
 document.querySelectorAll('.sheet').forEach(sh=>{sh.addEventListener('click',e=>{if(e.target===sh||e.target.closest('[data-close]'))closeSheets()})});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheets()});
 $('btnPrefs').onclick=()=>{renderPrefs();openSheet('prefs')};
+$('btnLang').onclick=()=>{S.lang=S.lang==='he'?'en':'he';save();renderHome()};
 
 function optRow(key,opts,cls=''){
   return `<div class="opts" data-key="${key}">${opts.map(([v,t,st])=>`<button class="${cls}" data-v="${v}" aria-pressed="${String(S[key])===String(v)}" ${st?`style="${st}"`:''}>${t}</button>`).join('')}</div>`;
@@ -771,7 +777,6 @@ function renderPrefs(){
   Object.keys(FONTS).forEach(k=>{if(!['stama','stams'].includes(k))loadFont(k)});
   const fopt=k=>[k,FONTS[k].name+(FONTS[k].noTrop?l.noTrop:''),`font-family:"${FONTS[k].fam}",serif`];
   $('prefsBody').innerHTML=`
-   <div class="field"><span class="k">${l.lang}</span>${optRow('lang',[['he','עברית'],['en','English']])}</div>
    <div class="field"><span class="k">${l.loc}</span>${optRow('il',[[false,l.chul],[true,l.eretz]])}</div>
    <div class="field"><span class="k">${l.mode}</span>${optRow('mode',[['sec',l.modeSec],['pas',l.modePas]])}</div>
    <div class="field"><span class="k">${l.font}</span>${optRow('font',['tf','td','fr','dr'].map(k=>[k,FONTS[k].name,`font-family:"${FONTS[k].fam}",serif;font-size:16px`]))}</div>
