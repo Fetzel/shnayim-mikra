@@ -1,0 +1,806 @@
+<title>שנים מקרא</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: one calm reading column on a paper ground; tablet widths open a second column for Targum/Rashi. */
+:root{
+  --bg:#f6f5f1; --surface:#ffffff; --ink:#1c1b18; --muted:#6c6a64; --line:#e3e0d7;
+  --accent:#2c4a7c; --accent-ink:#ffffff; --accent-soft:#e7ecf5;
+  --rep-bg:#efede7; --rep-ink:#57544d; --tg-ink:#3b3a36; --hl:#f3e6b8; --parch:#fbf6e9; --parch-ink:#1a150d; --parch-line:#e8dfc8; --tfs:26px;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Hebrew","Arial Hebrew",Arial,sans-serif;
+  --fs:28px;
+  --f-main:"TF","Times New Roman",serif; --f-tg:"TF","Times New Roman",serif; --f-rashi:"RASHI","TF",serif;
+  --f-stam:"STAMA","TF",serif; --f-stamv:"STAMS","TF",serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#13161c; --surface:#1b1f27; --ink:#ebe7de; --muted:#9a978f; --line:#2b313c;
+  --accent:#a8bde6; --accent-ink:#13161c; --accent-soft:#232c3e;
+  --rep-bg:#1d2129; --rep-ink:#b3afa6; --tg-ink:#d2cec4; --hl:#4a3f1c; --parch:#1e1b15; --parch-ink:#ece3cc; --parch-line:#332d22; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13161c; --surface:#1b1f27; --ink:#ebe7de; --muted:#9a978f; --line:#2b313c;
+  --accent:#a8bde6; --accent-ink:#13161c; --accent-soft:#232c3e;
+  --rep-bg:#1d2129; --rep-ink:#b3afa6; --tg-ink:#d2cec4; --hl:#4a3f1c; --parch:#1e1b15; --parch-ink:#ece3cc; --parch-line:#332d22; color-scheme:dark}
+/* the reader's own choice wins over the host theme */
+:root[data-skin="light"]{--parch:#fbf6e9;--parch-ink:#1a150d;--parch-line:#e8dfc8;--bg:#f6f5f1;--surface:#fff;--ink:#1c1b18;--muted:#6c6a64;--line:#e3e0d7;--accent:#2c4a7c;--accent-ink:#fff;--accent-soft:#e7ecf5;--rep-bg:#efede7;--rep-ink:#57544d;--tg-ink:#3b3a36;--hl:#f3e6b8;color-scheme:light}
+:root[data-skin="sepia"]{--parch:#f8efdb;--parch-ink:#22190c;--parch-line:#e0d2b4;--bg:#f2e9d8;--surface:#f8f1e3;--ink:#2a2116;--muted:#7a6b55;--line:#e0d3bb;--accent:#6b4a22;--accent-ink:#fff8ec;--accent-soft:#eadcc2;--rep-bg:#e9dec8;--rep-ink:#5f5240;--tg-ink:#3d3324;--hl:#e8cf8a;color-scheme:light}
+:root[data-skin="dark"]{--parch:#1e1b15;--parch-ink:#ece3cc;--parch-line:#332d22;--bg:#13161c;--surface:#1b1f27;--ink:#ebe7de;--muted:#9a978f;--line:#2b313c;--accent:#a8bde6;--accent-ink:#13161c;--accent-soft:#232c3e;--rep-bg:#1d2129;--rep-ink:#b3afa6;--tg-ink:#d2cec4;--hl:#4a3f1c;color-scheme:dark}
+
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--ui);font-size:15px;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.he{direction:rtl}
+
+/* ---------- top bars ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:8px;padding-block:10px}
+.bar .title{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.bar .title b{font-size:16px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .title span{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;flex:none}
+.ib svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+[dir="rtl"] .flip svg,[dir="rtl"] .flipme{transform:scaleX(-1)}
+[dir="ltr"] .arr{transform:scaleX(-1)}
+.tog{height:40px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:14px;flex:none}
+.tog[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.seg{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);flex:none}
+.seg button{border:0;background:none;padding:0 11px;height:38px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.sizer{display:flex;align-items:center;gap:10px;padding-block:0 10px}
+.sizer .a{font-family:var(--f-main);color:var(--muted);line-height:1;cursor:pointer;border:0;background:none;padding:4px 6px}
+.sizer .a.s{font-size:17px}.sizer .a.l{font-size:27px}
+.sizer input{flex:1;accent-color:var(--accent);min-width:0;height:28px}
+.sizer output{font-size:12px;color:var(--muted);width:3.2em;text-align:center;font-variant-numeric:tabular-nums}
+
+/* ---------- home ---------- */
+#home .wrap{padding-block:18px 48px;display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand h1{margin:0;font-family:var(--f-main);font-weight:400;font-size:26px;line-height:1.2}
+.brand small{display:block;font-family:var(--ui);font-size:12.5px;color:var(--muted);margin-top:2px}
+.week{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 20px 20px;display:flex;flex-direction:column;gap:16px}
+.week .eyebrow{font-size:12px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.week h2{margin:0;font-family:var(--f-main);font-weight:400;font-size:clamp(34px,8vw,52px);line-height:1.1;direction:rtl}
+.week .date{color:var(--muted);font-size:14px}
+.go{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.go{grid-template-columns:1fr}}
+.big{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:start;border-radius:16px;padding:16px 18px;cursor:pointer;border:1px solid var(--line);background:var(--bg)}
+.big b{font-size:18px;font-weight:650}
+.big span{font-size:13.5px;color:var(--muted)}
+.big.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.big.primary span{color:inherit;opacity:.85}
+.day7{display:flex;gap:6px;flex-wrap:wrap}
+.day7 i{font-style:normal;font-size:12px;padding:4px 8px;border-radius:99px;background:var(--bg);border:1px solid var(--line);color:var(--muted)}
+.day7 i.on{background:var(--accent-soft);color:var(--accent);border-color:transparent;font-weight:650}
+.resume{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 16px;cursor:pointer;text-align:start}
+.resume div{flex:1;min-width:0}.resume b{display:block;font-size:15px}.resume span{font-size:13px;color:var(--muted)}
+details.more{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 16px}
+details.more summary{cursor:pointer;padding:12px 0;font-weight:650;list-style:none;display:flex;justify-content:space-between}
+details.more summary::after{content:"+";color:var(--muted);font-weight:400;font-size:20px;line-height:1}
+details.more[open] summary::after{content:"−"}
+.chumash{padding:6px 0 14px}
+.chumash h3{margin:6px 0 8px;font-size:13px;color:var(--muted);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px;direction:rtl}
+.chips button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 11px;cursor:pointer;font-family:var(--f-main);font-size:18px;line-height:1.2}
+.chips button.cur{border-color:var(--accent);color:var(--accent)}
+.foot{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* parsha picker sheet */
+.pick{display:flex;flex-direction:column;gap:10px}
+.pick .row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:520px){.pick .row{grid-template-columns:repeat(2,1fr)}}
+.pick .row button{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px;cursor:pointer;font-weight:600}
+.pick .row button.wide{grid-column:1/-1}
+
+/* ---------- reader ---------- */
+#reader main{padding-block:14px 120px}
+.steps{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;margin:4px 0 14px}
+.steps i{font-style:normal;font-size:13px;padding:5px 12px;border-radius:99px;border:1px solid var(--line);color:var(--muted);background:var(--surface)}
+.steps i.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:650}
+.steps i.past{color:var(--accent);border-color:var(--accent-soft);background:var(--accent-soft)}
+.alnav{display:flex;gap:6px;overflow-x:auto;direction:rtl;padding:2px 0 10px;scrollbar-width:none}
+.alnav::-webkit-scrollbar{display:none}
+.alnav button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 11px;cursor:pointer;font-size:14px}
+.alnav button.on{border-color:var(--accent);color:var(--accent);font-weight:650}
+.alnav button.past{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.alhead{direction:rtl;text-align:center;margin:26px 0 14px;display:flex;align-items:center;gap:12px;color:var(--accent)}
+.alhead::before,.alhead::after{content:"";flex:1;height:1px;background:var(--line)}
+.alhead b{font-family:var(--f-main);font-weight:400;font-size:calc(var(--fs)*.8)}
+.passlabel{direction:rtl;text-align:center;color:var(--muted);font-size:13px;margin:0 0 8px}
+
+.flow{direction:rtl;text-align:justify;font-family:var(--f-main);font-size:var(--fs);line-height:2.05;max-width:36em;margin:0 auto;hyphens:none}
+.flow.tg{font-family:var(--f-tg);color:var(--tg-ink);line-height:1.95}
+.vn{font-family:var(--ui);font-size:.42em;color:var(--accent);font-weight:650;vertical-align:.55em;margin-inline-end:.25em;user-select:none}
+.ch{display:inline-block;font-family:var(--ui);font-size:.42em;font-weight:700;color:var(--accent);border:1px solid var(--accent-soft);background:var(--accent-soft);border-radius:6px;padding:0 .45em;margin-inline-end:.35em;vertical-align:.45em;line-height:1.6}
+.bp{display:block;height:.55em}
+.bs{display:inline-block;width:2.4em}
+.lg{font-size:1.4em;line-height:0}
+.sm{font-size:.68em}
+.ktv{font-size:.62em;color:var(--muted);font-family:var(--f-main)}
+.v.tap{background:var(--hl);border-radius:4px}
+
+.pv{max-width:46em;margin:0 auto;padding:14px 0 18px;border-bottom:1px solid var(--line);display:grid;gap:6px}
+.pv .ref{direction:rtl;font-size:12.5px;color:var(--accent);font-weight:650;letter-spacing:.02em}
+.pv .mk{direction:rtl;text-align:justify;font-family:var(--f-main);font-size:var(--fs);line-height:2}
+.pv .mk.rep{color:var(--rep-ink)}
+body[data-rep="tint"] .pv .mk.rep{background:var(--rep-bg);border-radius:10px;padding:2px 12px}
+body[data-rep="small"] .pv .mk.rep{font-size:calc(var(--fs)*.88)}
+body[data-rep="bold"] .pv .mk.m1{font-weight:700}
+body[data-rep="plain"] .pv .mk.rep{color:inherit}
+.pv .tgx{direction:rtl;text-align:justify;font-family:var(--f-tg);font-size:calc(var(--fs)*.86);line-height:1.95;color:var(--tg-ink)}
+.lbl{font-family:var(--ui);font-size:11px;color:var(--muted);font-weight:650;display:block;margin-bottom:1px;letter-spacing:.03em}
+.rs{direction:rtl;text-align:justify;font-family:var(--f-rashi);font-size:calc(var(--fs)*.74);line-height:1.75;color:var(--ink)}
+.rs p{margin:0 0 .35em}
+.rs .dh{font-family:var(--f-main);font-weight:700}
+.tgv{max-width:46em;margin:0 auto;padding:10px 0 14px;border-bottom:1px solid var(--line);display:grid;gap:6px}
+.tgv .ref{direction:rtl;font-size:12.5px;color:var(--accent);font-weight:650}
+.tgv .tgx{direction:rtl;text-align:justify;font-family:var(--f-tg);font-size:var(--fs);line-height:1.95;color:var(--tg-ink)}
+@media (min-width:900px){
+  .pv.wide{max-width:none;grid-template-columns:1.2fr 1fr;column-gap:34px;direction:rtl;align-items:start}
+  .pv.wide .ref{grid-column:1/-1}
+  .pv.wide .colm{display:grid;gap:6px}
+  .pv.wide .cols{display:grid;gap:10px;border-inline-start:1px solid var(--line);padding-inline-start:28px}
+}
+.pv .colm,.pv .cols{display:grid;gap:6px;min-width:0}
+
+.next{display:flex;flex-direction:column;align-items:center;gap:10px;margin:34px auto 0;max-width:30em;text-align:center}
+.next button.go1{width:100%;border:0;border-radius:16px;background:var(--accent);color:var(--accent-ink);padding:16px 20px;font-size:18px;font-weight:650;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+.next button.go1 svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+.next .hint{font-size:13px;color:var(--muted)}
+.next button.ghost{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 16px;cursor:pointer}
+.done{max-width:30em;margin:30px auto 0;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px 20px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.done .chk{width:52px;height:52px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center}
+.done .chk svg{width:26px;height:26px;stroke:var(--accent);fill:none;stroke-width:2.4}
+.done h3{margin:0;font-family:var(--f-main);font-weight:400;font-size:28px}
+.done p{margin:0;color:var(--muted)}
+.loading{text-align:center;color:var(--muted);padding:60px 0}
+
+/* ---------- tikkun korim ---------- */
+#tikkun .bar .wrap.row2{padding-block:0 10px;gap:10px;flex-wrap:wrap}
+.seg3{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.seg3 button{border:0;background:none;padding:0 12px;height:36px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}
+.seg3 button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.tksize{display:flex;align-items:center;gap:8px;flex:1;min-width:180px}
+.tksize input{flex:1;accent-color:var(--accent);min-width:0}
+.tksize .a{font-family:var(--f-stam);color:var(--muted);border:0;background:none;cursor:pointer;line-height:1;padding:2px 4px}
+#tkMain{padding-block:12px 90px}
+.tkgrid{display:grid;gap:20px;justify-content:center}
+.pane{min-width:0}
+.scol{direction:rtl;background:var(--parch);color:var(--parch-ink);border:1px solid var(--parch-line);border-radius:6px;
+  padding:1.1em 1.2em;font-size:var(--tfs);width:min(18.5em,100%);margin:0 auto;box-sizing:border-box}
+.scol p{margin:0;text-align:justify;text-align-last:right;font-family:var(--f-stam);line-height:1.6;word-spacing:.08em}
+.scol.v p{font-family:var(--f-stamv);line-height:2.25}
+.scol .st{display:inline-block;width:4.4em}
+.scol .sw{display:inline-block;width:2.6em}
+.scol .lg{font-size:1.55em;line-height:0}
+.scol .sm{font-size:.6em}
+.w{cursor:pointer;border-radius:3px}
+.w.hl{background:var(--hl);box-shadow:0 0 0 2px var(--hl)}
+.am{font-family:var(--ui);font-size:.36em;font-weight:700;color:var(--accent);vertical-align:.9em;margin-inline-end:.3em;letter-spacing:.02em;user-select:none}
+.ptd{direction:rtl;font-family:var(--f-main);font-size:calc(var(--tfs)*.92);line-height:2.05;text-align:justify}
+.ptd p{margin:0 0 .2em}
+.ptd .alh{display:block;font-family:var(--ui);font-size:12.5px;font-weight:700;color:var(--accent);margin:1.2em 0 .2em;letter-spacing:.03em}
+.ptd .ktv{font-size:.6em}
+.tkchips{display:flex;gap:6px;overflow-x:auto;direction:rtl;padding:2px 0 12px;scrollbar-width:none;max-width:980px;margin:0 auto}
+.tkchips::-webkit-scrollbar{display:none}
+.tkchips button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 11px;cursor:pointer;font-size:14px}
+.peek{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:35;background:var(--surface);border:1px solid var(--line);
+  border-radius:16px;box-shadow:0 10px 30px rgb(0 0 0 / .18);padding:10px 18px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:200px;max-width:calc(100% - 32px)}
+.peek b{font-family:var(--f-main);font-weight:400;font-size:38px;line-height:1.6;direction:rtl}
+.peek span{font-size:12.5px;color:var(--muted);direction:rtl}
+.peek .pk-k{font-family:var(--f-main);font-size:15px}
+@media (min-width:900px){
+  .tkgrid.two{grid-template-columns:minmax(0,1fr) auto;direction:rtl;align-items:start;justify-content:stretch}
+  .tkgrid.two .pane{max-height:calc(100dvh - 150px);overflow-y:auto;position:sticky;top:140px;padding-inline:4px}
+  .tkgrid.two .pane.pt{padding-inline-end:22px;border-inline-end:1px solid var(--line)}
+}
+.tkgrid:not(.two) .pane.pt{display:none}
+@media (min-width:900px){.tkgrid.two .scol{width:18.5em;max-width:58vw}}
+
+/* ---------- settings sheet ---------- */
+.sheet{position:fixed;inset:0;z-index:40;background:rgb(0 0 0 / .35);display:flex;align-items:flex-end;justify-content:center}
+.sheet[hidden]{display:none!important}
+.panel{background:var(--surface);width:min(640px,100%);max-height:88%;overflow:auto;border-radius:20px 20px 0 0;padding:18px max(18px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:16px}
+@media (min-width:700px){.sheet{align-items:center}.panel{border-radius:20px;max-height:84%}}
+.panel header{display:flex;align-items:center;justify-content:space-between}
+.panel h2{margin:0;font-size:19px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field>label,.field>.k{font-size:13px;font-weight:650;color:var(--muted)}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opts button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 12px;cursor:pointer;font-size:14px}
+.opts button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:650}
+.opts button.font{font-size:19px;padding:6px 12px}
+.preview{direction:rtl;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--bg)}
+.preview .mk{font-family:var(--f-main);font-size:26px;line-height:2}
+.preview .mk.rep{color:var(--rep-ink)}
+body[data-rep="tint"] .preview .mk.rep{background:var(--rep-bg);border-radius:8px;padding:0 10px}
+body[data-rep="small"] .preview .mk.rep{font-size:23px}
+body[data-rep="bold"] .preview .mk.m1{font-weight:700}
+body[data-rep="plain"] .preview .mk.rep{color:inherit}
+.preview .tgx{font-family:var(--f-tg);font-size:22px;line-height:1.9;color:var(--tg-ink)}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin:0}
+@media (prefers-reduced-motion:no-preference){.big,.chips button,.next button.go1{transition:transform .12s ease}.big:active,.next button.go1:active{transform:scale(.985)}}
+</style>
+
+<div id="home">
+  <div class="wrap">
+    <div class="brand">
+      <div><h1 id="appName">שנים מקרא ואחד תרגום</h1><small id="appSub"></small></div>
+      <button class="ib" id="btnPrefs" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
+    <section class="week" aria-live="polite">
+      <div class="eyebrow" id="wkEyebrow"></div>
+      <h2 id="wkName"></h2>
+      <div class="date" id="wkDate"></div>
+      <div class="day7" id="wkDays"></div>
+      <div class="go">
+        <button class="big primary" id="btnToday"><b id="tdTitle"></b><span id="tdSub"></span></button>
+        <button class="big" id="btnFull"><b id="fullTitle"></b><span id="fullSub"></span></button>
+      </div>
+      <div class="go">
+        <button class="big" id="btnOne" style="padding:12px 18px"><b id="oneTitle" style="font-size:15px"></b><span id="oneSub"></span></button>
+        <button class="big" id="btnTk" style="padding:12px 18px"><b id="tkTitle" style="font-size:15px"></b><span id="tkSub"></span></button>
+      </div>
+    </section>
+    <button class="resume" id="btnResume" hidden><div><b id="rsTitle"></b><span id="rsSub"></span></div><svg viewBox="0 0 24 24" width="20" height="20" style="stroke:currentColor;fill:none;stroke-width:2" class="flipme"><path d="M9 6l6 6-6 6"/></svg></button>
+    <details class="more" id="more"><summary id="moreTitle"></summary><div id="allParshiyot"></div></details>
+    <p class="foot" id="credits"></p>
+  </div>
+</div>
+
+<div id="reader" hidden>
+  <div class="bar">
+    <div class="wrap">
+      <button class="ib flip" id="btnBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <div class="title"><b id="rdTitle"></b><span id="rdSub"></span></div>
+      <div class="seg" role="group" aria-label="Mode"><button id="mSec"></button><button id="mPas"></button></div>
+      <button class="tog" id="btnRashi" aria-pressed="false">רש״י</button>
+    </div>
+    <div class="wrap sizer">
+      <button class="a s" id="szDn" aria-label="Smaller text">א</button>
+      <input type="range" id="sz" min="16" max="56" step="1" aria-label="Text size">
+      <button class="a l" id="szUp" aria-label="Larger text">א</button>
+      <output id="szOut"></output>
+    </div>
+  </div>
+  <main class="wrap" id="rdMain"></main>
+</div>
+
+<div id="tikkun" hidden>
+  <div class="bar">
+    <div class="wrap">
+      <button class="ib flip" id="tkBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <div class="title"><b id="tkHead"></b><span id="tkHeadSub"></span></div>
+      <button class="tog" id="tkPane" aria-pressed="true" hidden></button>
+    </div>
+    <div class="wrap row2" style="display:flex;align-items:center">
+      <div class="seg3" role="group" aria-label="Display"><button data-m="plain"></button><button data-m="nikud"></button><button data-m="trop"></button></div>
+      <div class="tksize"><button class="a" id="tkDn" style="font-size:16px" aria-label="Smaller text">א</button><input type="range" id="tksz" min="16" max="60" step="1" aria-label="Text size"><button class="a" id="tkUp" style="font-size:26px" aria-label="Larger text">א</button></div>
+    </div>
+  </div>
+  <div class="wrap"><nav class="tkchips" id="tkChips"></nav></div>
+  <main class="wrap" id="tkMain"></main>
+</div>
+<div class="peek" id="peek" hidden role="status"><b id="pkWord"></b><span class="pk-k" id="pkKtv"></span><span id="pkRef"></span></div>
+
+<div class="sheet" id="pickSheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+    <header><h2 id="pickTitle"></h2><button class="ib" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+    <div class="pick" id="pickBody"></div>
+  </div>
+</div>
+
+<div class="sheet" id="prefs" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="prefsTitle">
+    <header><h2 id="prefsTitle"></h2><button class="ib" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+    <div id="prefsBody" style="display:flex;flex-direction:column;gap:18px"></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+'use strict';
+/* ================= storage ================= */
+const LS={get(k,d){try{const v=localStorage.getItem('smt:'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+          set(k,v){try{localStorage.setItem('smt:'+k,JSON.stringify(v))}catch(e){}}};
+const DEF={tkMode:'plain',tfs:26,tkTwo:true,lang:'he',il:false,mode:'sec',rep:'tint',font:'tf',tgFont:'same',rashi:false,rashiNikud:false,ketiv:true,taam:'tachton',skin:'auto',fs:28};
+const S=Object.assign({},DEF,LS.get('prefs',{}));
+const save=()=>LS.set('prefs',S);
+
+/* ================= fonts ================= */
+const FONTS={
+  tf:{name:'Taamey Frank',fam:'TF',files:[['TaameyFrankCLM-Medium.ttf',400],['TaameyFrankCLM-Bold.ttf',700]]},
+  td:{name:'Taamey David',fam:'TD',files:[['TaameyDavidCLM-Medium.ttf',400],['TaameyDavidCLM-Bold.ttf',700]]},
+  fr:{name:'Frank Ruehl',fam:'FR',files:[['FrankRuehlCLM-Medium.otf',400],['FrankRuehlCLM-Bold.otf',700]]},
+  dr:{name:'Drugulin',fam:'DR',files:[['DrugulinCLM-Bold.otf',400],['DrugulinCLM-Bold.otf',700]]},
+  sm:{name:'Simple',fam:'SM',files:[['SimpleCLM-Medium.ttf',400]],noTrop:true},
+  rashi:{name:'Rashi',fam:'RASHI',files:[['Mekorot-Rashi.ttf',400]]},
+  stama:{name:'Stam Ashkenaz',fam:'STAMA',files:[['StamAshkenazCLM.ttf',400]]},
+  stams:{name:'Shlomo Stam',fam:'STAMS',files:[['ShlomoStam.ttf',400]]}
+};
+const fontLoads={};
+function loadFont(k){
+  if(fontLoads[k]) return fontLoads[k];
+  const F=FONTS[k];
+  fontLoads[k]=Promise.all(F.files.map(([file,w])=>fetch('fonts/'+file).then(r=>{if(!r.ok)throw new Error(file);return r.arrayBuffer()})
+    .then(buf=>{const ff=new FontFace(F.fam,buf,{weight:String(w)});document.fonts.add(ff);return ff.load()})))
+    .catch(e=>console.warn('font',k,e));
+  return fontLoads[k];
+}
+function applyFonts(){
+  const m=FONTS[S.font]||FONTS.tf;
+  const tg=S.tgFont==='same'?m:(FONTS[S.tgFont]||m);
+  const r=document.documentElement.style;
+  r.setProperty('--f-main',`"${m.fam}","TF","Times New Roman",serif`);
+  r.setProperty('--f-tg',`"${tg.fam}","${m.fam}","TF","Times New Roman",serif`);
+  loadFont('tf');loadFont(S.font);if(S.tgFont!=='same')loadFont(S.tgFont);
+}
+function applySkin(){const d=document.documentElement;if(S.skin==='auto')d.removeAttribute('data-skin');else d.setAttribute('data-skin',S.skin)}
+
+/* ================= text helpers ================= */
+const HEB_ONES=['','א','ב','ג','ד','ה','ו','ז','ח','ט'],HEB_TENS=['','י','כ','ל','מ','נ','ס','ע','פ','צ'],HEB_H=['','ק','ר','ש','ת'];
+function gem(n,marks=true){let s='';let h=Math.floor(n/100);n%=100;while(h>4){s+='ת';h-=4}s+=HEB_H[h];
+  if(n===15)s+='טו';else if(n===16)s+='טז';else s+=HEB_TENS[Math.floor(n/10)]+HEB_ONES[n%10];
+  if(!marks)return s;return s.length>1?s.slice(0,-1)+'״'+s.slice(-1):s+'׳'}
+const stripPts=s=>s.replace(/[֑-ׇ]/g,c=>c==='־'?c:'');
+/* note: single-element ['S'] = setuma break; ['S',letter] = small letter */
+function renderStream(st,o){
+  let h='';
+  for(const x of st){
+    if(typeof x==='string'){h+=x;continue}
+    const c=x[0];
+    if(c==='S'&&x.length===1){h+=o.flow?'<span class="bs"></span>':' ';continue}
+    if(c==='P'){h+=o.flow?'<span class="bp"></span>':' ';continue}
+    if(c==='L'){h+=`<span class="lg">${x[1]}</span>`;continue}
+    if(c==='S'){h+=`<span class="sm">${x[1]}</span>`;continue}
+    if(c==='|'){h+=' ׀ ';continue}
+    if(c==='l'){h+=' ׀';continue}
+    if(c==='K'){h+=x[2]+(o.ketiv?` <span class="ktv">[${x[1]}]</span>`:'');continue}
+    if(c==='C'){h+=renderStream(o.taam==='elyon'?x[1]:x[2],o);continue}
+    if(c==='W'){h+=' &emsp; ';continue}
+    if(c==='N'){h+='׆ ';continue}
+  }
+  return h;
+}
+const onkHTML=t=>t.replace(/\(([^)]*)\)/g,'<span class="ktv">($1)</span>');
+function rashiHTML(list){
+  return list.map(c=>{
+    let t=c;
+    if(!S.rashiNikud) t=stripPts(t);
+    t=t.replace(/<b>(.*?)<\/b>/g,'<span class="dh">$1</span>');
+    return `<p>${t}</p>`;
+  }).join('');
+}
+
+/* ================= data ================= */
+let META=null;const BK={};
+const getJSON=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(u);return r.json()});
+function book(b){if(!BK[b])BK[b]=Promise.all([getJSON(`data/t${b}.json`),getJSON(`data/o${b}.json`),getJSON(`data/r${b}.json`)]).then(([t,o,r])=>({t:t.c,o,r}));return BK[b]}
+function versesOf(al){ // al=[b,c1,v1,c2,v2] -> list of [c,v]
+  const [b,c1,v1,c2,v2]=al,out=[];
+  for(let c=c1;c<=c2;c++){const n=META.books[b][c-1];for(let v=(c===c1?v1:1);v<=(c===c2?v2:n);v++)out.push([c,v])}
+  return out;
+}
+
+/* ================= i18n ================= */
+const T={
+ he:{sub:'לעבור על הפרשה, עלייה אחר עלייה',week:'פרשת השבוע',parshaPfx:'פרשת ',today:'הקטע של היום',full:'כל הפרשה',fullSub:'שבע העליות ברצף',
+   one:'עלייה אחת',oneSub:'לבחור עלייה מסוימת',
+   days:['יום ראשון','יום שני','יום שלישי','יום רביעי','יום חמישי','יום שישי','שבת קודש'],
+   dshort:['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש״ק'],
+   al:['ראשון','שני','שלישי','רביעי','חמישי','שישי','שביעי'],and:' ו',
+   sec:'עלייה',pas:'פסוק',mikra1:'מקרא',mikra2:'שנית',targum:'תרגום',
+   readAgain:'קרא שנית',readAgainHint:'חוזרים לתחילת העלייה',toTargum:'לתרגום',toTargumHint:'תרגום אונקלוס על העלייה',
+   nextAl:a=>'לעלייה הבאה: '+a,finish:'סיום',doneTitle:'יישר כח!',doneToday:'סיימת את הקטע של היום.',doneFull:'סיימת את כל הפרשה.',
+   tomorrow:a=>'מחר: '+a,home:'למסך הראשי',resume:'להמשיך מהמקום שהפסקת',more:'פרשה אחרת',
+   chumash:['בראשית','שמות','ויקרא','במדבר','דברים'],combined:'מחוברות',
+   prefs:'הגדרות',lang:'שפה',loc:'מקום',chul:'חוץ לארץ',eretz:'ארץ ישראל',mode:'אופן הקריאה',
+   modeSec:'לפי עלייה — מקרא, מקרא, תרגום',modePas:'פסוק פסוק — שנים מקרא ותרגום לכל פסוק',
+   rep:'הבדל בין הקריאה הראשונה לשנייה',repTint:'גוון אפור',repSmall:'שנייה קטנה יותר',repBold:'ראשונה מודגשת',repPlain:'ללא הבדל',
+   font:'גופן הפסוקים',tgFont:'גופן התרגום',same:'כמו הפסוקים',rashiNik:'ניקוד ברש״י',ketiv:'להראות כתיב ליד הקרי',
+   taam:'טעמי עשרת הדברות',tachton:'טעם תחתון',elyon:'טעם עליון',skin:'מראה',auto:'אוטומטי',light:'בהיר',sepia:'ספיה',dark:'כהה',
+   on:'כן',off:'לא',rashiNote:'כשרש״י מופעל: באופן "עלייה" רש״י מופיע עם התרגום על כל פסוק; באופן "פסוק" אחרי התרגום.',
+   noTrop:' (בלי טעמים)',pickAl:'איזו עלייה?',loading:'טוען…',wkOf:'שבת',
+   credits:'נוסח המקרא: מקרא על פי המסורה (CC BY-SA). אונקלוס ורש״י: ספריא. חלוקת העליות ולוח הפרשיות: Hebcal. גופנים: Culmus, SIL, Makor.',
+   tdLabel:(d,a)=>d+' · '+a, shabbos:'שבת קודש · כל הפרשה',ch:'פרק',v:'פסוק',tikkun:'תיקון קוראים',tikkunSub:'כתב סת״ם, להתכונן לקריאה',tkModes:['כתב','ניקוד','טעמים'],tkPane:'עם ניקוד',ktvPfx:'כתיב: ',tkHint:'נגיעה על מילה מראה אותה עם ניקוד וטעמים'},
+ en:{sub:'Shnayim mikra v\'echad targum, aliyah by aliyah',week:'This week',parshaPfx:'Parshas ',today:"Today's section",full:'Full parsha',fullSub:'All seven aliyos in order',
+   one:'One aliyah',oneSub:'Pick a specific aliyah',
+   days:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Shabbos'],
+   dshort:['Sun','Mon','Tue','Wed','Thu','Fri','Shab'],
+   al:['Rishon','Sheni','Shlishi','Revi\'i','Chamishi','Shishi','Shevi\'i'],and:' & ',
+   sec:'Aliyah',pas:'Pasuk',mikra1:'Mikra',mikra2:'Again',targum:'Targum',
+   readAgain:'Read again',readAgainHint:'Back to the start of the aliyah',toTargum:'On to Targum',toTargumHint:'Onkelos on this aliyah',
+   nextAl:a=>'Next aliyah: '+a,finish:'Finish',doneTitle:'Yasher koach!',doneToday:"You finished today's section.",doneFull:'You finished the whole parsha.',
+   tomorrow:a=>'Tomorrow: '+a,home:'Back to home',resume:'Continue where you left off',more:'Another parsha',
+   chumash:['Bereishis','Shemos','Vayikra','Bamidbar','Devarim'],combined:'Combined',
+   prefs:'Settings',lang:'Language',loc:'Location',chul:'Chutz la\'aretz',eretz:'Eretz Yisrael',mode:'Reading mode',
+   modeSec:'By aliyah — mikra, mikra, targum',modePas:'Pasuk by pasuk — twice, then targum',
+   rep:'Second reading looks',repTint:'Gray tint',repSmall:'Smaller',repBold:'First in bold',repPlain:'Same',
+   font:'Pasuk font',tgFont:'Targum font',same:'Same as pasuk',rashiNik:'Nikud in Rashi',ketiv:'Show ksiv next to kri',
+   taam:'Aseres hadibros trop',tachton:'Taam tachton',elyon:'Taam elyon',skin:'Appearance',auto:'Auto',light:'Light',sepia:'Sepia',dark:'Dark',
+   on:'On',off:'Off',rashiNote:'With Rashi on: in aliyah mode Rashi appears with the Targum on each pasuk; in pasuk mode it comes after the Targum.',
+   noTrop:' (no trop)',pickAl:'Which aliyah?',loading:'Loading…',wkOf:'Shabbos',
+   credits:'Torah text: Miqra according to the Masorah (CC BY-SA). Onkelos and Rashi: Sefaria. Aliyos and calendar: Hebcal. Fonts: Culmus, SIL, Makor.',
+   tdLabel:(d,a)=>d+' · '+a, shabbos:'Shabbos · full parsha',ch:'Perek',v:'Pasuk',tikkun:'Tikkun korim',tikkunSub:'Ksav STaM, to prepare for leining',tkModes:['Plain','Nikud','Trop'],tkPane:'Vowelized',ktvPfx:'Ksiv: ',tkHint:'Tap a word to see it with nikud and trop'}
+};
+const L=()=>T[S.lang];
+function pName(k){const p=META.parshiyot[k];return S.lang==='he'?p.he:p.en}
+function alNames(idx){const a=L().al;return idx.length===1?a[idx[0]]:idx.slice(0,-1).map(i=>a[i]).join(', ')+L().and+a[idx[idx.length-1]]}
+
+/* ================= calendar ================= */
+const ymd=d=>d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+function thisWeek(now=new Date()){
+  const d=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  d.setDate(d.getDate()+((6-d.getDay()+7)%7));
+  const cal=META.cal[S.il?'i':'d'];
+  for(let i=0;i<5;i++){const e=cal[ymd(d)];if(e)return{key:e[0],heDate:e[1],enDate:e[2],date:new Date(d),bump:i>0};d.setDate(d.getDate()+7)}
+  return null;
+}
+function todayIdx(dow){return dow===6?[0,1,2,3,4,5,6]:dow===5?[5,6]:[dow]}
+
+/* ================= state & routing ================= */
+let SESSION=null; // {key, idx:[aliyah indexes], kind, pos:{ai,pass}}
+const $=id=>document.getElementById(id);
+function show(view){$('home').hidden=view!=='home';$('reader').hidden=view!=='reader';$('tikkun').hidden=view!=='tikkun';if(view!=='tikkun')$('peek').hidden=true}
+function go(hash){if(location.hash!=='#'+hash)location.hash=hash;else route()}
+window.addEventListener('hashchange',route);
+function route(){
+  const h=location.hash.slice(1);
+  closeSheets(true);
+  if(h==='read'&&SESSION){show('reader');renderReader(false)}
+  else if(h==='tikkun'&&TK){show('tikkun');renderTikkun()}
+  else{show('home');renderHome()}
+}
+
+/* ================= home ================= */
+function renderHome(){
+  const l=L();document.documentElement.lang=S.lang;document.body.dir=S.lang==='he'?'rtl':'ltr';
+  $('appName').textContent=S.lang==='he'?'שנים מקרא ואחד תרגום':'Shnayim Mikra';
+  $('appSub').textContent=l.sub;
+  const wk=thisWeek();
+  if(!wk){$('wkName').textContent='—';return}
+  const dow=new Date().getDay();
+  $('wkEyebrow').textContent=l.week;
+  $('wkName').textContent=(S.lang==='he'?'פרשת ':'')+META.parshiyot[wk.key].he;
+  $('wkDate').textContent=(S.lang==='he'?l.wkOf+' '+wk.heDate:l.wkOf+', '+wk.date.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' · '+wk.enDate)+(S.lang==='en'?' · '+META.parshiyot[wk.key].en:'');
+  // day chips: which aliyah each weekday gets
+  const chips=[0,1,2,3,4,5].map(d=>{const idx=todayIdx(d);return `<i class="${!wk.bump&&d===dow?'on':''}">${l.dshort[d]} · ${alNames(idx)}</i>`});
+  $('wkDays').innerHTML=chips.join('');
+  const idx=wk.bump?[0]:todayIdx(dow);
+  $('tdTitle').textContent=l.today;
+  $('tdSub').textContent=wk.bump?l.tdLabel(l.days[0],l.al[0]):dow===6?l.shabbos:l.tdLabel(l.days[dow],alNames(idx));
+  $('btnToday').onclick=()=>start(wk.key,idx,dow===6&&!wk.bump?'full':'today');
+  $('fullTitle').textContent=l.full;$('fullSub').textContent=l.fullSub;
+  $('btnFull').onclick=()=>start(wk.key,[0,1,2,3,4,5,6],'full');
+  $('oneTitle').textContent=l.one;$('oneSub').textContent=l.oneSub;
+  $('btnOne').onclick=()=>pickAliyah(wk.key);
+  $('tkTitle').textContent=l.tikkun;$('tkSub').textContent=l.tikkunSub;
+  $('btnTk').onclick=()=>openTikkun(wk.key,0);
+  // resume
+  const r=LS.get('pos',null);
+  if(r&&META.parshiyot[r.key]){
+    $('btnResume').hidden=false;$('rsTitle').textContent=l.resume;
+    const a=r.idx[r.pos.ai];
+    $('rsSub').textContent=pName(r.key)+' · '+l.al[a]+(r.mode==='sec'?' · '+[l.mikra1,l.mikra2,l.targum][r.pos.pass]:'');
+    $('btnResume').onclick=()=>{SESSION=r;go('read')};
+  }else $('btnResume').hidden=true;
+  // all parshiyot
+  $('moreTitle').textContent=l.more;
+  const byBook=[[],[],[],[],[]];
+  for(const k of META.order){byBook[META.parshiyot[k].aliyot[0][0]].push(k)}
+  const combos=Object.keys(META.parshiyot).filter(k=>!META.order.includes(k));
+  $('allParshiyot').innerHTML=byBook.map((ks,b)=>`<div class="chumash"><h3>${l.chumash[b]}</h3><div class="chips">${ks.map(k=>`<button data-k="${k}" class="${k===wk.key?'cur':''}">${META.parshiyot[k].he}</button>`).join('')}</div></div>`).join('')
+    +`<div class="chumash"><h3>${l.combined}</h3><div class="chips">${combos.map(k=>`<button data-k="${k}" class="${k===wk.key?'cur':''}">${META.parshiyot[k].he}</button>`).join('')}</div></div>`;
+  $('allParshiyot').querySelectorAll('button').forEach(b=>b.onclick=()=>pickAliyah(b.dataset.k,true));
+  $('credits').textContent=l.credits;
+}
+function pickAliyah(key,withFull){
+  const l=L();$('pickTitle').textContent=pName(key)+(withFull?'':' · '+l.pickAl);
+  const body=$('pickBody');
+  body.innerHTML=`<div class="row">${withFull?`<button class="wide" data-i="all">${l.full}</button>`:''}${withFull?`<button class="wide" data-i="tk">${l.tikkun}</button>`:''}${l.al.map((a,i)=>`<button data-i="${i}">${a}</button>`).join('')}</div>`;
+  body.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const i=b.dataset.i;closeSheets();
+    if(i==='all')start(key,[0,1,2,3,4,5,6],'full');else if(i==='tk')openTikkun(key,0);else start(key,[+i],'one');
+  });
+  openSheet('pickSheet');
+}
+function start(key,idx,kind){
+  SESSION={key,idx,kind,mode:S.mode,pos:{ai:0,pass:0}};persist();go('read');
+}
+function persist(){if(SESSION){SESSION.mode=S.mode;LS.set('pos',SESSION)}}
+
+/* ================= reader ================= */
+let rdToken=0;
+async function renderReader(scrollTop=true){
+  const l=L(),s=SESSION,main=$('rdMain');
+  document.documentElement.lang=S.lang;document.body.dir=S.lang==='he'?'rtl':'ltr';
+  $('mSec').textContent=l.sec;$('mPas').textContent=l.pas;
+  $('mSec').setAttribute('aria-pressed',S.mode==='sec');$('mPas').setAttribute('aria-pressed',S.mode==='pas');
+  $('btnRashi').setAttribute('aria-pressed',S.rashi);$('btnRashi').textContent=S.lang==='he'?'רש״י':'Rashi';
+  if(S.rashi)loadFont('rashi');
+  const P=META.parshiyot[s.key];
+  $('rdTitle').textContent=pName(s.key);
+  const tok=++rdToken;
+  main.innerHTML=`<div class="loading">${l.loading}</div>`;
+  const books=[...new Set(s.idx.map(i=>P.aliyot[i][0]))];
+  const B={};for(const b of books)B[b]=await book(b);
+  if(tok!==rdToken)return;
+  await (fontLoads[S.font]||Promise.resolve());
+  const o={taam:S.taam,ketiv:S.ketiv};
+  if(S.mode==='sec')renderSection(main,P,B,o);else renderPasuk(main,P,B,o);
+  if(scrollTop)window.scrollTo(0,0);
+}
+function refLabel(c,v){return S.lang==='he'?`${gem(c)} ${gem(v)}`:`${c}:${v}`}
+function rashiFor(B,b,c,v){const r=B[b].r[c-1]&&B[b].r[c-1][v-1];return r&&r.length?r:null}
+function renderSection(main,P,B,o){
+  const l=L(),s=SESSION,{ai,pass}=s.pos,a=s.idx[ai],al=P.aliyot[a],b=al[0],bk=B[b];
+  $('rdSub').textContent=l.al[a]+' · '+[l.mikra1+' א׳',l.mikra2,l.targum][pass].replace(' א׳',S.lang==='he'?' א׳':' 1');
+  let h='';
+  if(s.idx.length>1)h+=`<nav class="alnav">${s.idx.map((x,i)=>`<button data-ai="${i}" class="${i===ai?'on':i<ai?'past':''}">${l.al[x]}</button>`).join('')}</nav>`;
+  const lab=S.lang==='he'?['מקרא','שנית','תרגום']:['Mikra','Again','Targum'];
+  h+=`<div class="steps">${lab.map((t,i)=>`<i class="${i===pass?'on':i<pass?'past':''}">${t}</i>`).join('')}</div>`;
+  const vs=versesOf(al);
+  if(pass<2){
+    h+='<div class="flow">';
+    let prevC=null;
+    vs.forEach(([c,v],i)=>{
+      const rec=bk.t[c-1][v-1];
+      if(c!==prevC&&(v===1||i===0)){h+=`<span class="ch">${S.lang==='he'?l.ch+' '+gem(c,false):l.ch+' '+c}</span>`}
+      prevC=c;
+      h+=`<span class="v" data-c="${c}" data-v="${v}"><span class="vn">${S.lang==='he'?gem(v,false):v}</span>${renderStream(rec.s,Object.assign({flow:true},o))}</span> `;
+      if(i<vs.length-1){if(rec.b==='P')h+='<span class="bp"></span>';else if(rec.b==='S')h+='<span class="bs"></span>'}
+    });
+    h+='</div>';
+  }else if(!S.rashi){
+    h+='<div class="flow tg">';
+    vs.forEach(([c,v],i)=>{const rec=bk.t[c-1][v-1];
+      h+=`<span class="v"><span class="vn">${S.lang==='he'?gem(v,false):v}</span>${onkHTML(bk.o[c-1][v-1])}</span> `;
+      if(i<vs.length-1){if(rec.b==='P')h+='<span class="bp"></span>';else if(rec.b==='S')h+='<span class="bs"></span>'}
+    });
+    h+='</div>';
+  }else{
+    vs.forEach(([c,v])=>{
+      const r=rashiFor(B,b,c,v);
+      h+=`<div class="tgv"><div class="ref">${refLabel(c,v)}</div><div class="tgx">${onkHTML(bk.o[c-1][v-1])}</div>${r?`<div class="rs">${rashiHTML(r)}</div>`:''}</div>`;
+    });
+  }
+  // next step
+  const isLastAl=ai===s.idx.length-1;
+  if(pass===0)h+=nextBtn(l.readAgain,l.readAgainHint,'again');
+  else if(pass===1)h+=nextBtn(l.toTargum,l.toTargumHint,'tg');
+  else if(!isLastAl)h+=nextBtn(l.nextAl(l.al[s.idx[ai+1]]),'','nextal');
+  else h+=doneCard();
+  main.innerHTML=h;
+  wireReader(main);
+}
+function nextBtn(t,hint,act){
+  const ic=act==='again'?'<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>':'<svg viewBox="0 0 24 24" class="arr"><path d="M15 6l-6 6 6 6"/></svg>';
+  return `<div class="next"><button class="go1" data-act="${act}">${ic}<span>${t}</span></button>${hint?`<span class="hint">${hint}</span>`:''}</div>`;
+}
+function doneCard(){
+  const l=L(),s=SESSION;let sub=s.kind==='today'?l.doneToday:s.kind==='full'?l.doneFull:'';
+  const dow=new Date().getDay();
+  let tm='';if(s.kind==='today'&&dow<5)tm=l.tomorrow(alNames(todayIdx(dow+1)));
+  return `<div class="done"><div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h3>${l.doneTitle}</h3>${sub?`<p>${sub}</p>`:''}${tm?`<p>${tm}</p>`:''}<button class="ghost" data-act="home" style="margin-top:6px;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 16px;cursor:pointer">${l.home}</button></div>`;
+}
+function renderPasuk(main,P,B,o){
+  const l=L(),s=SESSION;
+  $('rdSub').textContent=alNames(s.idx);
+  let h='';
+  const wide=window.matchMedia('(min-width:900px)').matches;
+  s.idx.forEach((a,ii)=>{
+    const al=P.aliyot[a],b=al[0],bk=B[b];
+    h+=`<div class="alhead" id="al${ii}"><b>${l.al[a]}</b></div>`;
+    for(const [c,v] of versesOf(al)){
+      const rec=bk.t[c-1][v-1],txt=renderStream(rec.s,o),r=S.rashi?rashiFor(B,b,c,v):null;
+      const side=`<div class="tgx">${onkHTML(bk.o[c-1][v-1])}</div>${r?`<div class="rs">${rashiHTML(r)}</div>`:''}`;
+      h+=`<article class="pv wide" data-c="${c}" data-v="${v}" data-ai="${ii}"><div class="ref">${refLabel(c,v)}</div><div class="colm"><div class="mk m1">${txt}</div><div class="mk rep">${txt}</div></div><div class="cols">${side}</div></article>`;
+    }
+  });
+  h+=doneCard();
+  main.innerHTML=h;
+  wireReader(main);
+  if(SESSION.pos.anchor){const el=main.querySelector(`.pv[data-c="${SESSION.pos.anchor[0]}"][data-v="${SESSION.pos.anchor[1]}"]`);if(el)requestAnimationFrame(()=>el.scrollIntoView({block:'start'}))}
+}
+function wireReader(main){
+  main.querySelectorAll('[data-act]').forEach(btn=>btn.onclick=()=>{
+    const s=SESSION,a=btn.dataset.act;
+    if(a==='again')s.pos.pass=1;
+    else if(a==='tg')s.pos.pass=2;
+    else if(a==='nextal'){s.pos.ai++;s.pos.pass=0}
+    else if(a==='home'){LS.set('pos',null);go('home');return}
+    persist();renderReader(true);
+  });
+  main.querySelectorAll('.alnav button').forEach(btn=>btn.onclick=()=>{SESSION.pos.ai=+btn.dataset.ai;SESSION.pos.pass=0;persist();renderReader(true)});
+}
+// remember position in pasuk mode while scrolling
+let scrT=0;
+window.addEventListener('scroll',()=>{
+  if($('reader').hidden||!SESSION||S.mode!=='pas')return;
+  clearTimeout(scrT);scrT=setTimeout(()=>{
+    const els=document.querySelectorAll('#rdMain .pv');const top=150;
+    for(const el of els){const r=el.getBoundingClientRect();if(r.bottom>top){SESSION.pos.anchor=[+el.dataset.c,+el.dataset.v];SESSION.pos.ai=+el.dataset.ai;persist();break}}
+  },250);
+},{passive:true});
+
+/* mode + rashi toggles */
+$('mSec').onclick=()=>{if(S.mode==='sec')return;S.mode='sec';save();SESSION.pos.pass=0;SESSION.pos.anchor=null;persist();renderReader(true)};
+$('mPas').onclick=()=>{if(S.mode==='pas')return;S.mode='pas';save();SESSION.pos.anchor=null;persist();renderReader(true).then(()=>{const el=$('al'+SESSION.pos.ai);if(el&&SESSION.pos.ai>0)el.scrollIntoView()})};
+$('btnRashi').onclick=()=>{S.rashi=!S.rashi;save();const y=window.scrollY;renderReader(false).then(()=>{if(S.mode==='sec')window.scrollTo(0,y)})};
+$('btnBack').onclick=()=>{persist();go('home')};
+
+/* ================= text size ================= */
+function setFs(v,fromSlider){
+  v=Math.max(16,Math.min(56,Math.round(v)));S.fs=v;
+  document.documentElement.style.setProperty('--fs',v+'px');
+  if(!fromSlider)$('sz').value=v;$('szOut').textContent=v;
+}
+$('sz').addEventListener('input',e=>setFs(+e.target.value,true));
+$('sz').addEventListener('change',save);
+$('szDn').onclick=()=>{setFs(S.fs-2);save()};$('szUp').onclick=()=>{setFs(S.fs+2);save()};
+// pinch to zoom the text
+let pinch=null;
+const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+$('rdMain').addEventListener('touchstart',e=>{if(e.touches.length===2)pinch={d:dist(e.touches),fs:S.fs}},{passive:true});
+$('rdMain').addEventListener('touchmove',e=>{if(pinch&&e.touches.length===2){e.preventDefault();setFs(pinch.fs*dist(e.touches)/pinch.d)}},{passive:false});
+$('rdMain').addEventListener('touchend',e=>{if(pinch&&e.touches.length<2){pinch=null;save()}});
+// ctrl+wheel on desktop
+$('rdMain').addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();setFs(S.fs-(e.deltaY>0?1:-1));save()}},{passive:false});
+
+/* ================= tikkun korim ================= */
+let TK=null; // {key, al}
+function tokenize(st,taam,out){
+  out=out||[];let cur=null;
+  const flush=()=>{if(cur&&cur.p.length)out.push(cur);cur=null};
+  const lastW=()=>{for(let i=out.length-1;i>=0;i--)if(out[i].t==='w')return out[i];return null};
+  for(const x of st){
+    if(typeof x==='string'){
+      for(const part of x.split(/([ ־])/)){
+        if(part===' ')flush();
+        else if(part==='־'){if(cur)cur.mq=true;flush()}
+        else if(part){if(!cur)cur={t:'w',p:[]};cur.p.push([part,''])}
+      }
+      continue;
+    }
+    const c=x[0];
+    if((c==='L'||c==='S')&&x.length===2){if(!cur)cur={t:'w',p:[]};cur.p.push([x[1],c==='L'?'lg':'sm']);continue}
+    if(c==='|'||c==='l'){flush();const w=lastW();if(w)w.ps=true;continue}
+    if(c==='K'){flush();out.push({t:'w',p:[[x[2],'']],k:x[1]});continue}
+    if(c==='C'){flush();tokenize(taam==='elyon'?x[1]:x[2],taam,out);continue}
+    flush();out.push({t:c==='S'?'S':c});   // P, S(etuma), W, N
+  }
+  flush();return out;
+}
+const RX_ALL=/[֑-ׇ]/g, RX_TROP=/[֑-ֽ֯׀׃]/g;
+function stamWord(w,mode){
+  const conv=s=>mode==='plain'?s.replace(RX_ALL,''):mode==='nikud'?s.replace(RX_TROP,''):s;
+  if(w.k&&mode==='plain')return w.k;
+  return w.p.map(([s,cls])=>cls?`<span class="${cls}">${conv(s)}</span>`:conv(s)).join('')+(mode!=='plain'&&w.mq?'־':'');
+}
+function ptWord(w){return w.p.map(([s,cls])=>cls?`<span class="${cls}">${s}</span>`:s).join('')+(w.ps?' ׀':'')+(w.k&&S.ketiv?` <span class="ktv">[${w.k}]</span>`:'')}
+function openTikkun(key,ai){TK={key,ai};LS.set('tk',TK);loadFont('stama');loadFont('stams');go('tikkun')}
+let tkWords=[];
+async function renderTikkun(){
+  const l=L(),P=META.parshiyot[TK.key];
+  document.documentElement.lang=S.lang;document.body.dir=S.lang==='he'?'rtl':'ltr';
+  $('tkHead').textContent=l.tikkun+' · '+pName(TK.key);$('tkHeadSub').textContent=l.tkHint;
+  document.querySelectorAll('#tikkun .seg3 button').forEach((b,i)=>{b.textContent=l.tkModes[i];b.setAttribute('aria-pressed',b.dataset.m===S.tkMode)});
+  const wide=matchMedia('(min-width:900px)').matches;
+  $('tkPane').hidden=!wide;$('tkPane').textContent=l.tkPane;$('tkPane').setAttribute('aria-pressed',S.tkTwo);
+  if(!S.tfsSet){const avail=Math.min(document.documentElement.clientWidth,980)-34;const fit=Math.floor(avail/(wide&&S.tkTwo?2*20.9:20.9));S.tfs=Math.max(16,Math.min(40,fit))}
+  $('tksz').value=S.tfs;document.documentElement.style.setProperty('--tfs',S.tfs+'px');
+  $('tkChips').innerHTML=P.aliyot.map((a,i)=>`<button data-ai="${i}">${l.al[i]}</button>`).join('');
+  $('tkMain').innerHTML=`<div class="loading">${l.loading}</div>`;
+  const books=[...new Set(P.aliyot.map(a=>a[0]))];const B={};for(const b of books)B[b]=await book(b);
+  await Promise.all([loadFont('stama'),loadFont('stams')]);
+  const mode=S.tkMode;let sc='<p>',pt='<p>';tkWords=[];let gi=0;
+  P.aliyot.forEach((al,ai)=>{
+    const b=al[0],bk=B[b];
+    sc+=`<span class="am" id="tka${ai}">${l.al[ai]}</span>`;
+    pt+=`</p><span class="alh" id="tkp${ai}">${l.al[ai]}</span><p>`;
+    const vs=versesOf(al);
+    vs.forEach(([c,v],vi)=>{
+      const rec=bk.t[c-1][v-1];
+      pt+=`<span class="vn">${S.lang==='he'?gem(v,false):v}</span>`;
+      for(const tk of tokenize(rec.s,S.taam)){
+        if(tk.t==='w'){tkWords.push({w:tk,b,c,v});
+          sc+=`<span class="w" data-i="${gi}">${stamWord(tk,mode)}</span>${mode!=='plain'&&tk.mq?'':' '}`;
+          pt+=`<span class="w" data-i="${gi}">${ptWord(tk)}</span>${tk.mq?'־':' '}`;gi++}
+        else if(tk.t==='P'){sc+='</p><p>';pt+=' '}
+        else if(tk.t==='S'){sc+='<span class="st"></span> ';pt+=' '}
+        else if(tk.t==='W'){sc+='<span class="sw"></span> ';pt+=' &ensp; '}
+        else if(tk.t==='N'){sc+='׆ ';pt+='׆ '}
+      }
+      const last=ai===P.aliyot.length-1&&vi===vs.length-1;
+      if(!last){if(rec.b==='P'){sc+='</p><p>';pt+='</p><p>'}else if(rec.b==='S'){sc+='<span class="st"></span> '}}
+    });
+  });
+  sc+='</p>';pt+='</p>';
+  const two=wide&&S.tkTwo;
+  $('tkMain').innerHTML=`<div class="tkgrid ${two?'two':''}"><div class="pane pt"><div class="ptd">${pt}</div></div><div class="pane sc"><div class="scol ${mode==='plain'?'':'v'}">${sc}</div></div></div>`;
+  $('tkMain').querySelectorAll('.w').forEach(el=>el.onclick=e=>{e.stopPropagation();tkTap(+el.dataset.i,el)});
+  $('tkChips').querySelectorAll('button').forEach(btn=>btn.onclick=()=>tkJump(+btn.dataset.ai));
+  if(TK.ai)requestAnimationFrame(()=>tkJump(TK.ai,true));
+}
+function tkJump(ai,instant){
+  TK.ai=ai;LS.set('tk',TK);
+  const two=document.querySelector('.tkgrid.two');
+  const a=$('tka'+ai),p=$('tkp'+ai);
+  if(two){a.closest('.pane').scrollTop=a.offsetTop-a.closest('.pane').offsetTop-8;p.closest('.pane').scrollTop=p.offsetTop-p.closest('.pane').offsetTop-8;window.scrollTo(0,0)}
+  else{const y=a.getBoundingClientRect().top+window.scrollY-$('tikkun').querySelector('.bar').offsetHeight-60;window.scrollTo({top:y,behavior:instant?'auto':'smooth'})}
+}
+let pkT=0;
+function tkTap(i){
+  const x=tkWords[i],l=L();
+  document.querySelectorAll('#tkMain .w.hl').forEach(e=>e.classList.remove('hl'));
+  document.querySelectorAll(`#tkMain .w[data-i="${i}"]`).forEach(e=>e.classList.add('hl'));
+  $('pkWord').innerHTML=x.w.p.map(([s,c])=>s).join('')+(x.w.mq?'־':'');
+  $('pkKtv').textContent=x.w.k?l.ktvPfx+x.w.k:'';$('pkKtv').hidden=!x.w.k;
+  $('pkRef').textContent=(S.lang==='he'?l.chumash[x.b]+' '+gem(x.c)+' '+gem(x.v):l.chumash[x.b]+' '+x.c+':'+x.v);
+  $('peek').hidden=false;
+  const two=document.querySelector('.tkgrid.two');
+  if(two){const el=two.querySelector(`.pane.pt .w[data-i="${i}"]`);if(el){const pn=el.closest('.pane');pn.scrollTo({top:el.offsetTop-pn.offsetTop-pn.clientHeight/2,behavior:'smooth'})}}
+  clearTimeout(pkT);pkT=setTimeout(()=>{$('peek').hidden=true},6000);
+}
+document.addEventListener('click',e=>{if(!$('peek').hidden&&!e.target.closest('.w')&&!e.target.closest('#peek'))$('peek').hidden=true});
+document.querySelectorAll('#tikkun .seg3 button').forEach(b=>b.onclick=()=>{S.tkMode=b.dataset.m;save();renderTikkun()});
+$('tkPane').onclick=()=>{S.tkTwo=!S.tkTwo;save();renderTikkun()};
+$('tkBack').onclick=()=>go('home');
+function setTfs(v){v=Math.max(16,Math.min(60,Math.round(v)));S.tfs=v;document.documentElement.style.setProperty('--tfs',v+'px');$('tksz').value=v}
+$('tksz').addEventListener('input',e=>{S.tfsSet=true;setTfs(+e.target.value)});$('tksz').addEventListener('change',save);
+$('tkDn').onclick=()=>{S.tfsSet=true;setTfs(S.tfs-2);save()};$('tkUp').onclick=()=>{S.tfsSet=true;setTfs(S.tfs+2);save()};
+let tpinch=null;
+$('tkMain').addEventListener('touchstart',e=>{if(e.touches.length===2)tpinch={d:dist(e.touches),fs:S.tfs}},{passive:true});
+$('tkMain').addEventListener('touchmove',e=>{if(tpinch&&e.touches.length===2){e.preventDefault();setTfs(tpinch.fs*dist(e.touches)/tpinch.d)}},{passive:false});
+$('tkMain').addEventListener('touchend',e=>{if(tpinch&&e.touches.length<2){tpinch=null;S.tfsSet=true;save()}});
+let rzT=0;window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(!$('tikkun').hidden)renderTikkun()},300)});
+
+/* ================= sheets ================= */
+function openSheet(id){$(id).hidden=false}
+function closeSheets(silent){['pickSheet','prefs'].forEach(id=>$(id).hidden=true)}
+document.querySelectorAll('.sheet').forEach(sh=>{sh.addEventListener('click',e=>{if(e.target===sh||e.target.closest('[data-close]'))closeSheets()})});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheets()});
+$('btnPrefs').onclick=()=>{renderPrefs();openSheet('prefs')};
+
+function optRow(key,opts,cls=''){
+  return `<div class="opts" data-key="${key}">${opts.map(([v,t,st])=>`<button class="${cls}" data-v="${v}" aria-pressed="${String(S[key])===String(v)}" ${st?`style="${st}"`:''}>${t}</button>`).join('')}</div>`;
+}
+function renderPrefs(){
+  const l=L();$('prefsTitle').textContent=l.prefs;
+  Object.keys(FONTS).forEach(k=>{if(!['stama','stams'].includes(k))loadFont(k)});
+  const fopt=k=>[k,FONTS[k].name+(FONTS[k].noTrop?l.noTrop:''),`font-family:"${FONTS[k].fam}",serif`];
+  $('prefsBody').innerHTML=`
+   <div class="field"><span class="k">${l.lang}</span>${optRow('lang',[['he','עברית'],['en','English']])}</div>
+   <div class="field"><span class="k">${l.loc}</span>${optRow('il',[[false,l.chul],[true,l.eretz]])}</div>
+   <div class="field"><span class="k">${l.mode}</span>${optRow('mode',[['sec',l.modeSec],['pas',l.modePas]])}</div>
+   <div class="field"><span class="k">${l.font}</span>${optRow('font',['tf','td','fr','dr'].map(k=>[k,FONTS[k].name,`font-family:"${FONTS[k].fam}",serif;font-size:16px`]))}</div>
+   <div class="field"><span class="k">${l.tgFont}</span>${optRow('tgFont',[['same',l.same],...['tf','td','fr','dr','sm'].map(k=>[k,FONTS[k].name,`font-family:"${FONTS[k].fam}",serif;font-size:16px`])])}</div>
+   <div class="field"><span class="k">${l.rep}</span>${optRow('rep',[['tint',l.repTint],['small',l.repSmall],['bold',l.repBold],['plain',l.repPlain]])}
+     <div class="preview" id="pv"></div></div>
+   <div class="field"><span class="k">${l.rashiNik}</span>${optRow('rashiNikud',[[false,l.off],[true,l.on]])}<p class="note">${l.rashiNote}</p></div>
+   <div class="field"><span class="k">${l.ketiv}</span>${optRow('ketiv',[[true,l.on],[false,l.off]])}</div>
+   <div class="field"><span class="k">${l.taam}</span>${optRow('taam',[['tachton',l.tachton],['elyon',l.elyon]])}</div>
+   <div class="field"><span class="k">${l.skin}</span>${optRow('skin',[['auto',l.auto],['light',l.light],['sepia',l.sepia],['dark',l.dark]])}</div>`;
+  book(0).then(bk=>{const t=renderStream(bk.t[0][0].s,{taam:S.taam,ketiv:false});
+    $('pv').innerHTML=`<div class="mk m1">${t}</div><div class="mk rep">${t}</div><div class="tgx">${bk.o[0][0]}</div>`});
+  $('prefsBody').querySelectorAll('.opts').forEach(row=>row.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const k=row.dataset.key;let v=b.dataset.v;if(v==='true')v=true;else if(v==='false')v=false;
+    S[k]=v;save();applyAll();
+    row.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    if(k==='lang')renderPrefs();
+    if(k==='mode'&&SESSION){SESSION.pos.pass=0;SESSION.pos.anchor=null}
+    if(!$('reader').hidden)renderReader(false);else if(!$('tikkun').hidden)renderTikkun();else renderHome();
+  }));
+}
+function applyAll(){applyFonts();applySkin();document.body.dataset.rep=S.rep;setFs(S.fs)}
+
+/* ================= boot ================= */
+applyAll();
+getJSON('data/meta.json').then(m=>{META=m;
+  if(location.hash==='#read'){const r=LS.get('pos',null);if(r)SESSION=r;else location.hash='home'}
+  if(location.hash==='#tikkun'){TK=LS.get('tk',null);if(!TK)location.hash='home'}
+  route();
+}).catch(e=>{document.getElementById('wkName').textContent='Could not load data';console.error(e)});
+})();
+</script>

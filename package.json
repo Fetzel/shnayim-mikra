@@ -1,0 +1,1 @@
+{"name":"shnayim-mikra","version":"1.0.0","private":true,"scripts":{"build":"python3 tools/build_www.py","sync":"npm run build && npx cap sync android"},"dependencies":{"@capacitor/android":"^7.6.10","@capacitor/cli":"^7.6.10","@capacitor/core":"^7.6.10"}}
